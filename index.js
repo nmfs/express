@@ -30,16 +30,12 @@ app.get('/api/persons/:id', (req, res) => {
   }*/
 })
 
-
+/*
 app.delete('/api/persons/:id', (req, res) => {
   Person.deleteOne({ _id: req.params.id})
-  /*
-  console.log(`deleted id=${id}`)
-  persons = persons.filter(p => p.id !== id)
-*/
   res.status(204).end()
 })
-
+*/
 app.post('/api/persons', (req, res) => {
   const body = req.body
 
