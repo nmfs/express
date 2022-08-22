@@ -6,9 +6,11 @@ const Person = require('./models/person')
 
 const app = express()
 
+
+
 app.use(express.static('build'))
-app.use(cors())
 app.use(express.json())
+app.use(cors())
 app.use(morgan('tiny'))
 
 const persons = [{name: "hi", number: "23"}]
@@ -20,28 +22,35 @@ app.get('/api/persons', (req, res) => {
   //res.json(persons)
 })
 
-app.get('/api/persons/:id', (req, res) => {
-  Person.findById(req.params.id).then(p => res.json(p))
-  /*const id = Number(req.params.id)
-  const person = persons.find(p => p.id === id)
-  if(person) {
-    console.log(person)
-    res.json(person)
-  } else {
-    res.status(404).end()
-  }*/
+app.get('/api/persons/:id', (req, res, next) => {
+  Person.findById(req.params.id)
+    .then(p => {
+      if(p)
+        res.json(p)
+      else
+        res.status(404).end()
+    })
+    .catch(err => next(err))
 })
 
 
-app.delete('/api/persons/:id', (req, res) => {
-
-  Person.findOneAndRemove({_id: req.params.id}, (err, doc) => {
+app.delete('/api/persons/:id', (req, res, next) => {
+  Person.findByIdAndRemove(req.params.id)
+    .then(result => {
+      if(!result)
+        console.log('Person to delete not found')
+      else
+        console.log('Removed person : ', result)
+      res.status(204).end()
+    })
+    .catch(err => next(err))
+  /*Person.findOneAndRemove({_id: req.params.id}, (err, doc) => {
     if(err)
       console.log('error delete', err)
     else
       console.log('Removed person : ', doc)
   })
-  res.status(204).end()
+  res.status(204).end()*/
 })
 
 app.post('/api/persons', (req, res) => {
@@ -74,3 +83,20 @@ const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
+
+
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
+
+const errorHandler = (err, req, res, next) => {
+  console.error(err.message)
+  if(err.name === 'CastError') {
+    return res.status(400).send({ error: 'malformatted id'})
+  }
+  next(err)
+}
+
+app.use(errorHandler)   // last loaded middleware
