@@ -1,27 +1,27 @@
 require('dotenv').config()
 const express = require('express')
-//const morgan = require('morgan')
-//const cors = require('cors')
-//const Person = require('./models/person')
+const morgan = require('morgan')
+const cors = require('cors')
+const Person = require('./models/person')
 
 const app = express()
 
-//app.use(express.static('build'))
-//app.use(cors())
+app.use(express.static('build'))
+app.use(cors())
 app.use(express.json())
-//app.use(morgan('tiny'))
+app.use(morgan('tiny'))
 
 const persons = [{name: "hi", number: "23"}]
 
 app.get('/api/persons', (req, res) => {
-  /*Person.find({}).then(persons => {
+  Person.find({}).then(persons => {
     res.json(persons)
-  })*/
-  res.json(persons)
+  })
+  //res.json(persons)
 })
 
 app.get('/api/persons/:id', (req, res) => {
-  //Person.findById(req.params.id).then(p => res.json(p))
+  Person.findById(req.params.id).then(p => res.json(p))
   /*const id = Number(req.params.id)
   const person = persons.find(p => p.id === id)
   if(person) {
@@ -32,14 +32,20 @@ app.get('/api/persons/:id', (req, res) => {
   }*/
 })
 
-/*
+
 app.delete('/api/persons/:id', (req, res) => {
-  Person.deleteOne({ _id: req.params.id})
+
+  Person.findOneAndRemove({_id: req.params.id}, (err, doc) => {
+    if(err)
+      console.log('error delete', err)
+    else
+      console.log('Removed person : ', doc)
+  })
   res.status(204).end()
 })
-*/
+
 app.post('/api/persons', (req, res) => {
-  /*const body = req.body
+  const body = req.body
 
   if(!body.name || !body.number) {
     return res.status(400).json({ error: 'name or number missing'})
@@ -52,7 +58,7 @@ app.post('/api/persons', (req, res) => {
 
   person.save().then(p => {
     res.json(p)
-  })*/
+  })
 })
 
 /*
