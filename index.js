@@ -13,7 +13,6 @@ app.use(express.json())
 app.use(cors())
 app.use(morgan('tiny'))
 
-const persons = [{name: "hi", number: "23"}]
 
 app.get('/api/persons', (req, res) => {
   Person.find({}).then(persons => {
@@ -55,7 +54,7 @@ app.delete('/api/persons/:id', (req, res, next) => {
 
 app.post('/api/persons', (req, res, next) => {
   const body = req.body
-/*
+  /*
   if(!body.name || !body.number) {
     return res.status(400).json({ error: 'name or number missing'})
   }*/
@@ -99,7 +98,7 @@ const errorHandler = (err, req, res, next) => {
     return res.status(400).send({ error: 'malformatted id'})
   } else if (err.name === 'ValidationError') {
     return res.status(400).json({ error: err.message })
-  } 
+  }
   next(err)
 }
 

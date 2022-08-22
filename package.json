@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/nmfs/express#readme",
   "devDependencies": {
+    "eslint": "^8.22.0",
     "nodemon": "^2.0.19"
   },
   "dependencies": {
